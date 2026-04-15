@@ -11,51 +11,51 @@
 			{% csrf_token %}
 			<div class="form-row">
 				<div class="input-data">
-						{{profil_form.username}}
+						{{user_form.username}}
 					<div class="underline"></div>
 					<label for="">User Name</label>
 				</div>
 				<div class="input-data">
-					{{profil_form.nom}}
+					{{user_form.nom}}
 					<div class="underline"></div>
 					<label for="">First Name</label>
 				</div>
 					<div class="input-data">
-					{{profil_form.prenom}}
+					{{user_form.prenom}}
 					<div class="underline"></div>
 					<label for="">Last Name</label>
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="input-data">
-					{{profil_form.password}}
+					{{user_form.password1}}
 					<div class="underline"></div>
 					<label for="">Password</label>
 				</div>
 					<div class="input-data">
-					{{profil_form.password1}}
+					{{user_form.password2}}
 					<div class="underline"></div>
 					<label for="">Confirm Password</label>
 				</div>
 				<div class="input-data">
 					<!-- <label for="">Date of birth</label> -->
-					{{profil_form.birthday}}
+					{{client_form.birthday}}
 					<div class="underline"></div>
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="input-data">
-					{{profil_form.phone}}
+					{{client_form.phone}}
 					<div class="underline"></div>
 					<label for="">Phone Number</label>
 				</div>
 				<div class="input-data">
-					{{profil_form.gender}}
+					{{client_form.gender}}
 					<div class="underline"></div>
 					<label for="">Gender</label>
 				</div>
 				<div class="input-data">
-					{{profil_form.address}}
+					{{client_form.address}}
 					<div class="underline"></div>
 					<label for="">Office Number</label>
 				</div>

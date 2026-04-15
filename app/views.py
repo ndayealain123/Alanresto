@@ -10,27 +10,21 @@ def Home(request):
 	menu_list = Menu.objects.all().order_by('-id')[:3]
 	return render(request, "index.html", locals())
 
-def Canteen(request):
-	greet="how are you?"
-	return render(request, "name.html",locals())
-
-@login_required(login_url='/resto/login')
+@login_required
 def finishOrder(request,pk):
 	employee = Employee.objects.get(user=request.user)
 	order = Order.objects.get(id=pk)
-	order.vailable = True
-	order.employee = employee
-	order.save()
-	return redirect(orderview)
+	order.mark_ready(employee)
+	return redirect("order")
 
-@login_required(login_url='/resto/login')
+@login_required
 def receiveOrder(request,pk):
 	order = Order.objects.get(id=pk)
-	order.delived = True
-	order.save()
-	return redirect(orderview)
+	if order.available and not order.delivered:
+		order.mark_delivered()
+	return redirect("order")
 
-@login_required(login_url='/resto/login')
+@login_required
 def Create_order(request,pk):
 	client = Client.objects.get(user=request.user)
 	menu = Menu.objects.get(id=pk)
@@ -39,46 +33,27 @@ def Create_order(request,pk):
 		menu =menu
 		)
 	order.save()
-	return redirect(orderview)
+	return redirect("order")
 
 def Menuview(request):
 	menu_list = Menu.objects.all()
 	return render(request, "menu.html",locals())
 
 def register_profil(request):
-	profil_form=ProfileForm(request.POST or None, request.FILES)
+	user_form = RegistrationUserForm(request.POST or None)
+	client_form = ClientForm(request.POST or None)
 	if (request.method=='POST'):
-		if (profil_form.is_valid()):
-			username=profil_form.cleaned_data['username']
-			password=profil_form.cleaned_data['password']
-			password1=profil_form.cleaned_data['password1']
-			nom=profil_form.cleaned_data['nom']
-			prenom=profil_form.cleaned_data['prenom']
-			birthday=profil_form.cleaned_data['birthday']
-			gender=profil_form.cleaned_data['gender']
-			phone=profil_form.cleaned_data['phone']
-			address=profil_form.cleaned_data['address']
-
-			if (password==password1):
-				user=User.objects.create_user(username=username, password=password)
-				user.first_name=nom
-				user.last_name=prenom
-				user.save()
-				group = Group.objects.get_or_create(name= "Client")
-				user.groups.add(group[0])
-				profil=Client(user=user,
-						birthday=birthday,
-						gender=gender,
-						address=address,
-						phone=phone).save()
-				if user:
-					login(request, user)
-					return redirect(Home)
-				else:
-					return redirect(connexion)
-			else: 
-				profil_form=ProfileForm(request.FILES)
-	profil_form=ProfileForm(request.FILES)
+		if user_form.is_valid() and client_form.is_valid():
+			user = user_form.save()
+			client_group = Group.objects.get(name="Client")
+			user.groups.add(client_group)
+			client = client_form.save(commit=False)
+			client.user = user
+			client.save()
+			if user:
+				login(request, user)
+				return redirect("home")
+			return redirect("connect")
 	return render(request, 'regester.html',locals())
 
 def connexion(request):
@@ -90,7 +65,7 @@ def connexion(request):
 			user=authenticate(username=username,password=password)#verification donnée
 			if user:#si l'objet existe 
 				login(request, user)
-				return redirect(Home) #on connecte l'utilisateur
+				return redirect("home") #on connecte l'utilisateur
 			else:
 				connexion_form=ConnexionForm()
 	else:
@@ -99,26 +74,22 @@ def connexion(request):
 
 def deconnexion(request):
 	logout(request)
-	return redirect(Home)
+	return redirect("home")
 
-@login_required(login_url='/resto/login')
+@login_required
 def orderview(request):
-	group = Group.objects.get(user=request.user)
-	print(group)
+	group = request.user.groups.first()
 	orderList = []
-	group = str(group)
-	if group == "Client":
+	if not group:
+		return render(request, "order.html", locals())
+	group_name = str(group)
+	if group_name == "Client":
 		client = Client.objects.get(user=request.user)
-		print(client)
 		orderList = Order.objects.filter(client = client)
 	
-	elif group == "Chef":
-		orderList = Order.objects.all()
+	elif group_name == "Chef":
+		orderList = Order.objects.filter(delivered=False)
 	return render(request, "order.html",locals())
-
-def Restoo(request):
-	greet="how are you?"
-	return render(request, "first.html",locals())
 
 
 def aboutview(request):

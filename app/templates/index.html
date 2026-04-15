@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="{% static 'css/about.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/regester.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
 
     <title>Alan | {% block title %}Home{% endblock title %}</title>
 </head>
@@ -67,7 +67,7 @@
  {% if menu.photos %}
     <img src="{{ menu.photos.url }}" alt="{{ menu.name }}">
 {% else %}
-    <img src="{% static 'images/default-food.jpg' %}" alt="No Image">
+    <img src="{% static 'images/default-food.jpg' %}" alt="Default menu image">
 {% endif %}
 
     <h2>{{ menu.name }} | {{ menu.price }} BIF</h2>

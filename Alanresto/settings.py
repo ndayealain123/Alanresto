@@ -1,18 +1,19 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 from pathlib import Path
+import dj_database_url
 
-# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
-SECRET_KEY = 'your-secret-key'
-DEBUG = True   # Change to False in production
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("DJANGO_SECRET_KEY environment variable not set")
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'alanresto.onrender.com'
-]
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'alanresto.onrender.com']
 
 # Applications
 INSTALLED_APPS = [
@@ -62,10 +63,11 @@ WSGI_APPLICATION = 'Alanresto.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 # Password validation
@@ -85,7 +87,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Login redirect fix
-LOGIN_URL = '/login/'
+LOGIN_URL = 'connect'
 
 # Static files
 STATIC_URL = '/static/'
@@ -103,3 +105,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'root': {'handlers': ['console'], 'level': 'WARNING'},
+}
