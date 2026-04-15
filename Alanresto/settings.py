@@ -61,14 +61,19 @@ TEMPLATES = [
 # WSGI
 WSGI_APPLICATION = 'Alanresto.wsgi.application'
 
-# Database
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+# Default to SQLite if DATABASE_URL not set (local development)
+default_db_url = 'sqlite:///db.sqlite3'
+database_url = os.environ.get('DATABASE_URL', default_db_url)
+
+# Only add ssl_require if using PostgreSQL (not SQLite)
+if database_url.startswith('postgres'):
+    DATABASES = {
+        'default': dj_database_url.config(default=database_url, conn_max_age=600, ssl_require=True)
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(default=database_url, conn_max_age=600)
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
