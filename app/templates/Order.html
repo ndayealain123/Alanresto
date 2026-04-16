@@ -4,12 +4,18 @@
 	<title>Order</title>
 	{% endblock title %}
 	{% block content %}
+	<main class="page-section">
+	<div class="site-container">
+	<div class="section-header">
+		<h2>Your Orders</h2>
+		<p>Track placed, prepared, and delivered meals in one place.</p>
+	</div>
 	{% with first_group=user.groups.first %}
 	{% if first_group %}
 		{% with group_name=first_group.name %}
 	{% if orderList %}
-	<div class="table">
-	<table>
+	<div class="table order-table-wrapper">
+	<table class="order-table">
 		<thead>
 			<tr>
 				<th>Client</th>
@@ -22,13 +28,14 @@
 		<tbody>
 			{% for item in orderList %}
 			<tr>
-				<td>{{item.client.user.username}}</td>
-				<td>{{item.client.address}}</td>
-				<td>{{item.menu.name}} {{item.menu.price}} BIF</td>
-				<td>{{item.datetime}}</td>
+				<td data-label="Client">{{item.client.user.username}}</td>
+				<td data-label="Office number">{{item.client.address}}</td>
+				<td data-label="Menu">{{item.menu.name}} {{item.menu.price}} BIF</td>
+				<td data-label="Date">{{item.datetime}}</td>
 				<td class="action">
+					<div class="action-buttons">
 					{% if item.available and group_name == "Client" and not item.delivered  %}
-						<p>Placed...</p>
+						<span class="status-text">Placed...</span>
 						<a href="{% url 'received' item.id %}" class="received">Receive</a>
 					{% elif not item.available and group_name == "Client" and not item.delivered %}
 						<button class="received">Placed...</button>
@@ -42,6 +49,7 @@
 					{% if item.delivered %}
 						<button class="received">Received</button>
 					{% endif %}
+					</div>
 				</td>
 			</tr>
 			{% endfor %}
@@ -49,13 +57,14 @@
 	</table>
 	</div>
 	{% else %}
-	<h1 style="text-align:center;">No ordered Menu</h1>
+	<p class="empty-state">No ordered menu yet.</p>
 	{% endif %}
 		{% endwith %}
 	{% else %}
-	<h1 style="text-align:center;">No group assigned.</h1>
+	<p class="empty-state">No group assigned.</p>
 	{% endif %}
 	{% endwith %}
-
+	</div>
+	</main>
 
 	{% endblock content %}

@@ -1,40 +1,47 @@
 {% extends 'index.html' %}
 {% load static %}
-<title>Alan | {% block title %}About{% endblock title %}</title>
-
+{% block title %}About{% endblock title %}
 
 {% block content %}
-<div style="text-align: center; padding: 10px;">
-	<h1>About</h1>
-</div>
-<div class="About">
-        <div class="flex-item item-1">
-        	<div class="photos">
-      	<img src="{% static 'images/In side Restaurant.jpg'%}">
-        	</div>
-
-            <h3>Our Services</h3>
-            <p>We cook many qualities of foods and our fooods are very delicious.</br>
-				You are welcome</p>
+<main class="page-section">
+    <section class="site-container">
+        <div class="section-header">
+            <h2>About Us</h2>
+            <p>Alan Resto combines quality meals, friendly service, and fast delivery for your daily dining needs.</p>
         </div>
 
-        <div class="flex-item item-2">
-        	<div class="photos">
-      			<img src="{% static 'images/Image time.JFIF'%}">
-        	</div>
+        <div class="card-grid">
+            <article class="card">
+                <div class="card-image">
+                    <img src="{% static 'images/In side Restaurant.jpg' %}" alt="Inside Alan Resto restaurant">
+                </div>
+                <div class="card-body">
+                    <h3>Our Services</h3>
+                    <p>We prepare a wide variety of delicious meals with fresh ingredients and reliable customer service.</p>
+                </div>
+            </article>
 
-            <h3>Time of Work</h3>
-            <p>Our Restaurant open at 7:00AM until 7:30PM everyday Monday to Friday</p>
+            <article class="card">
+                <div class="card-image">
+                    <img src="{% static 'images/Image time.JFIF' %}" alt="Restaurant working schedule">
+                </div>
+                <div class="card-body">
+                    <h3>Opening Hours</h3>
+                    <p>Our restaurant is open from 7:00 AM to 7:30 PM, Monday to Friday.</p>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-image">
+                    <img src="{% static 'images/Locotion.jpg' %}" alt="Alan Resto location map">
+                </div>
+                <div class="card-body">
+                    <h3>Location</h3>
+                    <p>J946+R9x, Japan Blvd, Rohero, Bujumbura, Burundi.</p>
+                </div>
+            </article>
         </div>
-
-        <div class="flex-item item-3">
-        	<div class="photos">
-      	<img src="{% static 'images/Locotion.jpg'%}">
-        	</div>
-
-            <h3>Our Adress</h3>
-            <p>J946+R9x,Japan Bd,Rohero-Bujunbura-Burundi</p>
-        </div>
-</div>
+    </section>
+</main>
 {% endblock content %}
 

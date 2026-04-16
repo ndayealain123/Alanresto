@@ -5,82 +5,104 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="{% static 'css/about.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/register.css' %}">
 
     <title>Alan | {% block title %}Home{% endblock title %}</title>
 </head>
 
 <body>
 
-<div class="logo">
-    <h1>Alan Resto</h1>
-    <p>Cash on delivery</p>
-</div>
-
 <div class="header">
-    <div class="m-link">
-        <ul>
-            <li>
-                <a href="{% url 'home' %}">Home</a>
-            </li>
+    <div class="site-container header-inner">
+        <a class="brand" href="{% url 'home' %}">
+            <span class="brand-title">Alan Resto</span>
+            <span class="brand-tagline">Fresh meals delivered fast</span>
+        </a>
 
-            <li>
-                <a href="{% url 'menu' %}">Menu</a>
-            </li>
+        <div class="m-link">
+            <ul>
+                <li class="{% if request.path == '/' %}active{% endif %}"><a href="{% url 'home' %}">Home</a></li>
+                <li class="{% if request.path == '/menu/' %}active{% endif %}"><a href="{% url 'menu' %}">Menu</a></li>
+                {% if user.is_authenticated %}
+                <li class="{% if request.path == '/order/' %}active{% endif %}"><a href="{% url 'order' %}">Order</a></li>
+                {% endif %}
+                <li class="{% if request.path == '/cart/' %}active{% endif %}"><a href="{% url 'cart' %}">Cart ({{ cart_item_count }})</a></li>
+                <li class="{% if request.path == '/about/' %}active{% endif %}"><a href="{% url 'about' %}">About</a></li>
+            </ul>
+        </div>
 
+        <div class="login">
             {% if user.is_authenticated %}
-            <li>
-                <a href="{% url 'order' %}">Order</a>
-            </li>
+                <a class="auth-btn logout-btn" href="{% url 'deconnect' %}">Log Out</a>
+            {% else %}
+                <a class="auth-btn login-btn" href="{% url 'connect' %}">Login</a>
             {% endif %}
-
-            <li>
-                <a href="{% url 'about' %}">About</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="login">
-        {% if user.is_authenticated %}
-            <h3><a href="{% url 'deconnect' %}">Log Out</a></h3>
-        {% else %}
-            <h3><a class="lg" href="{% url 'connect' %}">Login</a></h3>
-        {% endif %}
+        </div>
     </div>
 </div>
+
+{% if messages %}
+<div class="site-container messages">
+    {% for message in messages %}
+    <div class="form-message">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
 
 
 {% block content %}
 
-<h1 style="text-align:center;">You are Welcome</h1>
+<main class="home-page">
+    <section class="hero-section">
+        <div class="site-container hero-grid">
+            <div class="hero-content">
+                <p class="hero-kicker">Welcome to Alan Resto</p>
+                <h1>Delicious food, clean service, and fast delivery.</h1>
+                <p>Discover tasty dishes prepared with fresh ingredients and delivered to your office or home.</p>
+                <a href="{% url 'menu' %}" class="btn order_btn">Explore Menu</a>
+            </div>
+            <div class="hero-image">
+                {% if menu_list and menu_list.0.photos %}
+                    <img src="{{ menu_list.0.photos.url }}" alt="{{ menu_list.0.name }}">
+                {% else %}
+                    <img src="{% static 'images/default-food.jpg' %}" alt="Featured restaurant dish">
+                {% endif %}
+            </div>
+        </div>
+    </section>
 
-<div class="container">
+    <section class="popular-section">
+        <div class="site-container">
+            <div class="section-header">
+                <h2>Popular Dishes</h2>
+                <p>Our customer favorites, crafted to satisfy every craving.</p>
+            </div>
 
-{% for menu in menu_list %}
-
-<div class="menu-item">
-
-    <div class="image">
-
- {% if menu.photos %}
-    <img src="{{ menu.photos.url }}" alt="{{ menu.name }}">
-{% else %}
-    <img src="{% static 'images/default-food.jpg' %}" alt="Default menu image">
-{% endif %}
-
-    <h2>{{ menu.name }} | {{ menu.price }} BIF</h2>
-
-    <div class="btn">
-        <a href="{% url 'new_order' menu.id %}" class="order_btn">Order</a>
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
+            <div class="dish-grid">
+                {% for menu in menu_list %}
+                <article class="dish-card">
+                    <div class="dish-image">
+                        {% if menu.photos %}
+                            <img src="{{ menu.photos.url }}" alt="{{ menu.name }}">
+                        {% else %}
+                            <img src="{% static 'images/default-food.jpg' %}" alt="Default menu image">
+                        {% endif %}
+                    </div>
+                    <div class="dish-body">
+                        <h3>{{ menu.name }}</h3>
+                        <p class="dish-price">{{ menu.price }} BIF</p>
+                        <div class="btn">
+                            <a href="{% url 'add_to_cart' menu.id %}" class="order_btn" aria-label="Add {{ menu.name }} to cart">Add to Cart</a>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <p class="empty-state">No dishes available right now.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
 
 {% endblock content %}
 
@@ -89,38 +111,37 @@
 {% block footer %}
 
 <div class="footer">
-
-<section class="resources">
+<div class="site-container footer-grid">
 
 <div class="module">
 <h3>Contact</h3>
 <ul>
-<li class="mail"><a href="">Support</a></li>
-<li class="phone"><a href="">(+257)71152681 or 69068207</a></li>
-<li class="twitter"><a href="">@resto</a></li>
-<li class="facebook"><a href="">Alan Resto</a></li>
+<li>Support Team</li>
+<li>(+257) 71152681 / 69068207</li>
+<li>@resto</li>
+<li>Alan Resto</li>
 </ul>
 </div>
 
 <div class="module">
-<h3>Alan Resto</h3>
-
+<h3>About</h3>
 <p>
-We cook many qualities of foods and our foods are very delicious.<br>
-You are welcome
+We prepare quality meals with fresh ingredients and a focus on reliable delivery service.
 </p>
+</div>
 
+<div class="module">
+<h3>Location</h3>
 <ul>
 <li>Alan Resto street J946+R9x, Japan Bd</li>
 <li>Rohero-Bujumbura - Burundi</li>
 </ul>
+</div>
 
 </div>
 
-</section>
-
-<div>
-<p>&copy; right; Created by Alain NDAYE in May 2022</p>
+<div class="copyright">
+<p>&copy; Created by Alain NDAYE in May 2022</p>
 </div>
 
 </div>

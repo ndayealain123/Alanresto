@@ -35,6 +35,12 @@ class RegistrationUserForm(UserCreationForm):
 			user.save()
 		return user
 
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for field in self.fields.values():
+			css_classes = field.widget.attrs.get("class", "")
+			field.widget.attrs["class"] = f"{css_classes} form-control".strip()
+
 
 class ClientForm(forms.ModelForm):
 	birthday = forms.DateField(
@@ -45,11 +51,19 @@ class ClientForm(forms.ModelForm):
 		model = Client
 		fields = ("birthday", "gender", "phone", "address")
 
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for field in self.fields.values():
+			css_classes = field.widget.attrs.get("class", "")
+			field.widget.attrs["class"] = f"{css_classes} form-control".strip()
+
 class ConnexionForm(forms.Form):
 	username= forms.CharField(widget= forms.TextInput(attrs={
     		'placeholder':'username....',
+			'class': 'form-control',
     		}),label="Username :")
 	password = forms.CharField(widget= forms.PasswordInput(attrs={
     		'placeholder':'password....',
+			'class': 'form-control',
     		}),label="PassWord :")
 	

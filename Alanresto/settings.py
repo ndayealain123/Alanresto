@@ -1,15 +1,11 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 import os
+import secrets
 from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-if not SECRET_KEY:
-    raise ValueError("DJANGO_SECRET_KEY environment variable not set")
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or secrets.token_urlsafe(50)
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
@@ -53,6 +49,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processors.cart_item_count',
             ],
         },
     },

@@ -1,0 +1,69 @@
+{% extends 'index.html' %}
+
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+<div class="page-section">
+    <div class="site-container">
+        <div class="card" style="max-width: 400px; margin: auto; padding: 20px;">
+            <h2 style="text-align:center;">Register</h2>
+            {{ user_form.non_field_errors }}
+            <form method="POST" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.errors or user_form.errors or client_form.errors %}
+                <div class="form-message">
+                    Please correct the errors below.
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="{{ user_form.username.id_for_label }}">Username</label>
+                    {{ user_form.username }}
+                    {{ user_form.username.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ user_form.nom.id_for_label }}">First Name</label>
+                    {{ user_form.nom }}
+                    {{ user_form.nom.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ user_form.prenom.id_for_label }}">Last Name</label>
+                    {{ user_form.prenom }}
+                    {{ user_form.prenom.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ user_form.password1.id_for_label }}">Password</label>
+                    {{ user_form.password1 }}
+                    {{ user_form.password1.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ user_form.password2.id_for_label }}">Confirm Password</label>
+                    {{ user_form.password2 }}
+                    {{ user_form.password2.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ client_form.birthday.id_for_label }}">Date of Birth</label>
+                    {{ client_form.birthday }}
+                    {{ client_form.birthday.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ client_form.phone.id_for_label }}">Phone Number</label>
+                    {{ client_form.phone }}
+                    {{ client_form.phone.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ client_form.gender.id_for_label }}">Gender</label>
+                    {{ client_form.gender }}
+                    {{ client_form.gender.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ client_form.address.id_for_label }}">Office Number</label>
+                    {{ client_form.address }}
+                    {{ client_form.address.errors }}
+                </div>
+                <button type="submit" class="order_btn" style="width:100%;">Create Account</button>
+            </form>
+            <p>Already have an account? <a href="{% url 'connect' %}">Sign In</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

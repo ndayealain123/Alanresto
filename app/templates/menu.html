@@ -4,29 +4,33 @@
 {% block title %}Menu{% endblock title %}
 
 {% block content %}
+<main class="page-section">
+    <div class="site-container">
+        <div class="section-header">
+            <h2>Our Menus</h2>
+            <p>Choose from our fresh dishes prepared daily by our kitchen team.</p>
+        </div>
 
-<h1 style="text-align:center;">Our Menus</h1>
-
-<div class="container">
-
-{% for menu in menu_list %}
-
-<div class="menu-item">
-
-<div class="image">
-<img src="{{ menu.photos.url }}" alt="{{ menu.name }}">
-</div>
-
-<h2>{{ menu.name }} | {{ menu.price }} BIF</h2>
-
-<div class="btn">
-<a href="{% url 'new_order' menu.id %}" class="order_btn">Order</a>
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
+        <div class="card-grid">
+            {% for menu in menu_list %}
+            <div class="card">
+                <div class="card-image">
+                    {% if menu.photos %}
+                    <img src="{{ menu.photos.url }}" alt="{{ menu.name }}">
+                    {% else %}
+                    <img src="{% static 'images/default-food.jpg' %}" alt="Default menu image">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h3>{{ menu.name }} | {{ menu.price }} BIF</h3>
+                    <a href="{% url 'add_to_cart' menu.id %}" class="btn order_btn" aria-label="Add {{ menu.name }} to cart">Add to Cart</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="empty-state">No dishes available right now.</p>
+            {% endfor %}
+        </div>
+    </div>
+</main>
 
 {% endblock content %}

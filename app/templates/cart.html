@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+
+{% block title %}Cart{% endblock title %}
+
+{% block content %}
+<main class="page-section">
+    <div class="site-container">
+        <div class="section-header">
+            <h2>Order Summary</h2>
+            <p>Review your selected dishes before checkout.</p>
+        </div>
+
+        {% if cart_items %}
+        <div class="table order-table-wrapper">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td data-label="Item">{{ item.name }}</td>
+                        <td data-label="Price">{{ item.price }} BIF</td>
+                        <td data-label="Quantity">
+                            <div class="btn quantity-controls">
+                                <a href="{% url 'decrease_quantity' item.id %}" class="order_btn" aria-label="Decrease quantity of {{ item.name }}">-</a>
+                                <span class="quantity-value">{{ item.quantity }}</span>
+                                <a href="{% url 'increase_quantity' item.id %}" class="order_btn" aria-label="Increase quantity of {{ item.name }}">+</a>
+                            </div>
+                        </td>
+                        <td data-label="Total">{{ item.total }} BIF</td>
+                        <td data-label="Action" class="action">
+                            <a href="{% url 'remove_from_cart' item.id %}" class="delived">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card cart-summary-card">
+            <div class="card-body">
+                <h3>Grand Total: {{ grand_total }} BIF</h3>
+                <div class="btn">
+                    <button type="button" class="order_btn">Checkout</button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p class="empty-state">Your cart is empty. Add dishes from the menu to continue.</p>
+        {% endif %}
+    </div>
+</main>
+{% endblock content %}

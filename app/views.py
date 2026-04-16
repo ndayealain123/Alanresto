@@ -1,9 +1,18 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import Group
+from django.contrib import messages
 from .models import *
 from .forms import *
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required 
+
+
+def _get_session_cart(request):
+	cart = request.session.get("cart")
+	if cart is None:
+		cart = {}
+		request.session["cart"] = cart
+	return cart
 
 
 def Home(request):
@@ -39,6 +48,85 @@ def Menuview(request):
 	menu_list = Menu.objects.all()
 	return render(request, "menu.html",locals())
 
+
+@login_required
+def add_to_cart(request, id):
+	menu_item = Menu.objects.get(id=id)
+	cart = _get_session_cart(request)
+	item_id = str(menu_item.id)
+	if item_id in cart:
+		cart[item_id]["quantity"] += 1
+	else:
+		cart[item_id] = {
+			"name": menu_item.name,
+			"price": int(menu_item.price),
+			"quantity": 1,
+		}
+	request.session["cart"] = cart
+	request.session.modified = True
+	messages.success(request, "Item added to cart")
+	return redirect("cart")
+
+
+@login_required
+def remove_from_cart(request, id):
+	cart = _get_session_cart(request)
+	item_id = str(id)
+	if item_id in cart:
+		del cart[item_id]
+		request.session["cart"] = cart
+		request.session.modified = True
+		messages.success(request, "Item removed from cart")
+	return redirect("cart")
+
+
+@login_required
+def increase_quantity(request, id):
+	cart = _get_session_cart(request)
+	item_id = str(id)
+	if item_id in cart:
+		cart[item_id]["quantity"] += 1
+		request.session["cart"] = cart
+		request.session.modified = True
+		messages.success(request, "Quantity increased")
+	return redirect("cart")
+
+
+@login_required
+def decrease_quantity(request, id):
+	cart = _get_session_cart(request)
+	item_id = str(id)
+	if item_id in cart:
+		if cart[item_id]["quantity"] > 1:
+			cart[item_id]["quantity"] -= 1
+			messages.success(request, "Quantity decreased")
+		else:
+			del cart[item_id]
+			messages.success(request, "Item removed from cart")
+		request.session["cart"] = cart
+		request.session.modified = True
+	return redirect("cart")
+
+
+@login_required
+def cart_view(request):
+	cart = _get_session_cart(request)
+	cart_items = []
+	grand_total = 0
+	for item_id, item in cart.items():
+		total = item["price"] * item["quantity"]
+		grand_total += total
+		cart_items.append(
+			{
+				"id": item_id,
+				"name": item["name"],
+				"price": item["price"],
+				"quantity": item["quantity"],
+				"total": total,
+			}
+		)
+	return render(request, "cart.html", {"cart_items": cart_items, "grand_total": grand_total})
+
 def register_profil(request):
 	user_form = RegistrationUserForm(request.POST or None)
 	client_form = ClientForm(request.POST or None)
@@ -54,7 +142,7 @@ def register_profil(request):
 				login(request, user)
 				return redirect("home")
 			return redirect("connect")
-	return render(request, 'regester.html',locals())
+	return render(request, 'register.html',locals())
 
 def connexion(request):
 	connexion_form=ConnexionForm(request.POST)
